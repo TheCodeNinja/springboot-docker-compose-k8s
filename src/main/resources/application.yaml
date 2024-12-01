@@ -40,7 +40,7 @@ server:
 
 # JWT Configuration
 jwt:
-  secret: ${JWT_SECRET:your-256-bit-secret}
+  secret: ${JWT_SECRET:5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437}
   expiration: ${JWT_EXPIRATION:86400000} # 24 hours
 
 # OpenAPI Configuration
@@ -64,21 +64,12 @@ management:
       prometheus:
         enabled: true
 
-#management:
-#  endpoints:
-#    web:
-#      exposure:
-#        include: health,info,metrics,prometheus
-#  endpoint:
-#    health:
-#      show-details: always
-#    metrics:
-#      enabled: true
-#    prometheus:
-#      enabled: true
-
 logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n"
+  file:
+    name: /var/log/application.log
   level:
     root: INFO
     com.example.demoapp: DEBUG
-    org.springframework.security: DEBUG
+    org.springframework.web: INFO
