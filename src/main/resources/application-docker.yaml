@@ -4,9 +4,9 @@ spring:
 
   # Database Configuration
   datasource:
-    url: jdbc:postgresql://${POSTGRES_HOST:postgres}:${POSTGRES_PORT:5432}/${POSTGRES_DB:myapp}
-    username: ${POSTGRES_USER:postgres}
-    password: ${POSTGRES_PASSWORD:postgres}
+    url: jdbc:postgresql://postgres:5432/myapp
+    username: postgres
+    password: postgres
     hikari:
       maximum-pool-size: 10
     driver-class-name: org.postgresql.Driver
@@ -23,15 +23,15 @@ spring:
 
   # Redis Configuration
   redis:
-    host: ${REDIS_HOST:localhost}
-    port: ${REDIS_PORT:6379}
-    password: ${REDIS_PASSWORD:}
+    host: redis
+    port: 6379
+    password:
 
   # Elasticsearch Configuration
   elasticsearch:
-    uris: ${ELASTICSEARCH_URI:http://localhost:9200}
-    username: ${ELASTICSEARCH_USERNAME:elastic}
-    password: ${ELASTICSEARCH_PASSWORD:elastic}
+    uris: http://elasticsearch:9200
+    username: elastic
+    password: elastic
 
 server:
   port: 8080
@@ -40,8 +40,8 @@ server:
 
 # JWT Configuration
 jwt:
-  secret: ${JWT_SECRET:5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437}
-  expiration: ${JWT_EXPIRATION:86400000} # 24 hours
+  secret: 5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437
+  expiration: 86400000 # 24 hours
 
 # OpenAPI Configuration
 springdoc:

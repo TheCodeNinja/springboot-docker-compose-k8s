@@ -1,3 +1,24 @@
+#filebeat.inputs:
+#  - type: container
+#    paths:
+#      - '/var/lib/docker/containers/*/*.log'
+#
+#processors:
+#  - add_docker_metadata:
+#      host: "unix:///var/run/docker.sock"
+#
+#  - decode_json_fields:
+#      fields: ["message"]
+#      target: "json"
+#      overwrite_keys: true
+#
+#output.elasticsearch:
+#  hosts: ["elasticsearch:9200"]
+#  indices:
+#    - index: "filebeat-%{[agent.version]}-%{+yyyy.MM.dd}"
+#
+#logging.json: true
+
 filebeat.inputs:
   - type: container
     paths:
@@ -12,9 +33,22 @@ processors:
       target: "json"
       overwrite_keys: true
 
+setup.kibana:
+  host: "kibana:5601"
+
+setup.ilm.enabled: false
+setup.template.enabled: true
+setup.template.name: "filebeat"
+setup.template.pattern: "filebeat-*"
+
 output.elasticsearch:
   hosts: ["elasticsearch:9200"]
-  indices:
-    - index: "filebeat-%{[agent.version]}-%{+yyyy.MM.dd}"
+  index: "filebeat-%{[agent.version]}-%{+yyyy.MM.dd}"
 
-logging.json: true
+logging.level: debug
+logging.to_files: true
+logging.files:
+  path: /var/log/filebeat
+  name: filebeat
+  keepfiles: 7
+  permissions: 0644
