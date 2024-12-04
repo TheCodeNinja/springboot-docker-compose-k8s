@@ -7,4 +7,6 @@ xpack.monitoring.enabled: true
 
 bootstrap.memory_lock: true
 
+action.destructive_requires_name: true
+indices.lifecycle.history_index_enabled: false
 indices.query.bool.max_clause_count: 1024

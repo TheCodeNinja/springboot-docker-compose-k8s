@@ -19,33 +19,110 @@
 #
 #logging.json: true
 
+
+
+
+
+#filebeat.inputs:
+#  - type: container
+#    paths:
+#      - '/var/lib/docker/containers/*/*.log'
+
+#filebeat.inputs:
+#  - type: container
+#    paths:
+#      - '/var/lib/docker/containers/*/*.log'
+#    containers.ids:
+#      - "${CONTAINER_ID}"
+#    # exclude_lines: ['.*DEBUG.*']  # Optional: exclude DEBUG logs
+#    exclude_files: [ '\.gz$' ]
+#    include_containers: [ 'springboot-app' ]
+#    # Add container filtering
+##    containers:
+##      include_labels:
+##        - "com.docker.compose.service=app"  # Only collect logs from your Spring Boot app
+#
+#processors:
+#  - add_docker_metadata:
+#      host: "unix:///var/run/docker.sock"
+#
+#  - decode_json_fields:
+#      fields: ["message"]
+#      target: "json"
+#      overwrite_keys: true
+#
+#setup.kibana:
+#  host: "kibana:5601"
+#
+##setup.ilm.enabled: false
+#setup.ilm:
+#  enabled: true
+#  rollover_alias: "filebeat"
+#  pattern: "{now/d}-000001"
+#
+#setup.template:
+#  enabled: true
+#  name: "filebeat"
+#  pattern: "filebeat-*"
+#
+#output.elasticsearch:
+#  hosts: ["elasticsearch:9200"]
+#  # index: "filebeat-%{[agent.version]}-%{+yyyy.MM.dd}"
+#  index: "filebeat-%{+yyyy.MM.dd}"
+#
+#logging.level: info
+#logging.to_files: true
+#logging.files:
+#  path: /var/log/filebeat
+#  name: filebeat
+#  keepfiles: 7
+#  permissions: 0644
+
 filebeat.inputs:
-  - type: container
+  - type: filestream
+    id: docker-logs
+    enabled: true
     paths:
       - '/var/lib/docker/containers/*/*.log'
-
-processors:
-  - add_docker_metadata:
-      host: "unix:///var/run/docker.sock"
-
-  - decode_json_fields:
-      fields: ["message"]
-      target: "json"
-      overwrite_keys: true
+    json.keys_under_root: true
+    json.add_error_key: true
+    json.message_key: log
+    processors:
+      - add_docker_metadata:
+          host: "unix:///var/run/docker.sock"
+      - decode_json_fields:
+          fields: ["message"]
+          target: "json"
+          overwrite_keys: true
+      - drop_event:
+          when:
+            not:
+              contains:
+                container.name: "springboot-app"
 
 setup.kibana:
   host: "kibana:5601"
 
-setup.ilm.enabled: false
-setup.template.enabled: true
-setup.template.name: "filebeat"
-setup.template.pattern: "filebeat-*"
+setup.ilm:
+  enabled: true
+  rollover_alias: "filebeat"
+  pattern: "{now/d}-000001"
+
+# Add template configuration
+setup.template:
+  enabled: true
+  name: "filebeat"
+  pattern: "filebeat-*"
+  settings:
+    index:
+      number_of_shards: 1
+      number_of_replicas: 0
 
 output.elasticsearch:
   hosts: ["elasticsearch:9200"]
-  index: "filebeat-%{[agent.version]}-%{+yyyy.MM.dd}"
+  index: "filebeat-%{+yyyy.MM.dd}"
 
-logging.level: debug
+logging.level: info
 logging.to_files: true
 logging.files:
   path: /var/log/filebeat

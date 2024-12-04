@@ -1,3 +1,8 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
 spring:
   application:
     name: demo-app
@@ -32,11 +37,6 @@ spring:
     uris: ${ELASTICSEARCH_URI:http://localhost:9200}
     username: ${ELASTICSEARCH_USERNAME:elastic}
     password: ${ELASTICSEARCH_PASSWORD:elastic}
-
-server:
-  port: 8080
-  servlet:
-    context-path: /api
 
 # JWT Configuration
 jwt:
