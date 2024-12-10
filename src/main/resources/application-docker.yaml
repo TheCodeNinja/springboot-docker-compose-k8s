@@ -71,5 +71,5 @@ logging:
     name: /var/log/application.log
   level:
     root: INFO
-    com.example.demoapp: DEBUG
+    com.example.demo: DEBUG
     org.springframework.web: INFO

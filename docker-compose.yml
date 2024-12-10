@@ -9,7 +9,7 @@ services:
     labels:
       com.docker.compose.service: app
     ports:
-      - "8080:8080"
+      - "8080:8080" # Maps port 8080 on the host to port 8080 inside the container
     environment:
       - SPRING_PROFILES_ACTIVE=docker
 #      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/myapp
@@ -18,7 +18,7 @@ services:
     logging:
       driver: "json-file"
       options:
-        max-size: "10m"
+        max-size: "10m" # 10 MB
         max-file: "3"
     depends_on:
       postgres:
@@ -66,9 +66,9 @@ services:
       - node.name=elasticsearch
       - cluster.name=es-docker-cluster
       - discovery.type=single-node
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - xpack.security.enabled=false
+      - bootstrap.memory_lock=true # Prevents memory swapping for better performance
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # Limits Java heap memory to 512 MB for efficient resource usage.
+      - xpack.security.enabled=false # Disables security features for development (e.g., no authentication)
     ulimits:
       memlock:
         soft: -1
@@ -108,8 +108,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     command: ["filebeat", "-c", "/usr/share/filebeat/config/filebeat.yml", "-e"]
     depends_on:
-#      - elasticsearch
-#      - kibana
       elasticsearch:
         condition: service_healthy
       kibana:
